@@ -16,7 +16,7 @@ import java.time.LocalDate;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TickerDayData {
+public class TickerData {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

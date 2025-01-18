@@ -21,4 +21,5 @@ public class Ticker {
     private Integer id;
 
     private String name;
+    private String companyName;
 }

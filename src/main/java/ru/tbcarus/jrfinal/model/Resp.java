@@ -16,5 +16,5 @@ public class Resp {
 
     private final UUID uuid = UUID.randomUUID();
     private Ticker ticker;
-    private List<TickerDayData> tickerDayData;
+    private List<TickerData> tickerData;
 }

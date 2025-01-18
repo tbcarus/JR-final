@@ -31,7 +31,7 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "user")
     @JsonManagedReference
-    private List<TickerDayData> tickerDayData;
+    private List<TickerData> tickerData;
 
     @Enumerated(EnumType.STRING)
     @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
