@@ -1,26 +1,56 @@
 package ru.tbcarus.jrfinal.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import ru.tbcarus.jrfinal.exception.EntityAlreadyExist;
+import ru.tbcarus.jrfinal.exception.EntityNotFoundException;
 import ru.tbcarus.jrfinal.model.User;
-import ru.tbcarus.jrfinal.model.dto.UserRegisterDto;
-import ru.tbcarus.jrfinal.model.dto.UserRegisterMapper;
+import ru.tbcarus.jrfinal.model.dto.*;
 import ru.tbcarus.jrfinal.repository.UserRepository;
 
-@Service
-public class UserService {
+import java.util.Optional;
 
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    UserRegisterMapper userRegisterMapper;
+@Service
+@RequiredArgsConstructor
+public class UserService implements UserDetailsService {
+
+    private final UserRepository userRepository;
+    private final UserRegisterMapper userRegisterMapper;
+    private final JwtService jwtService;
 
     public User register(UserRegisterDto userRegisterDto) {
-        if (userRepository.existsByEmail(userRegisterDto.getEmail())) {
+        if (userRepository.existsByEmail(userRegisterDto.getEmail().toLowerCase())) {
             throw new EntityAlreadyExist(userRegisterDto.getEmail(), "Entity already exist");
         }
         User user = userRegisterMapper.toUser(userRegisterDto);
         return userRepository.save(user);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return userRepository.findByEmailIgnoreCase(username).get();
+    }
+
+    public LoginResponse login(LoginRequest loginRequest) {
+        User user = getUserByEmail(loginRequest.getEmail());
+        String accessToken = jwtService.generateAccessToken(user);
+        String refreshToken = jwtService.generateRefreshToken(user);
+        return new LoginResponse(accessToken, refreshToken);
+    }
+
+    public RefreshResponse refreshToken(String refreshToken) {
+        User user = getUserByEmail(jwtService.extractUserName(refreshToken));
+        return new RefreshResponse(jwtService.refreshAccessToken(user));
+    }
+
+    private User getUserByEmail(String email) {
+        Optional<User> optionalUser = userRepository.findByEmailIgnoreCase(email);
+        if (optionalUser.isEmpty()) {
+            throw new EntityNotFoundException(email, String.format("Entity %s does not exist", email));
+        }
+        return optionalUser.get();
     }
 }
