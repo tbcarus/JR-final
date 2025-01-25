@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public class EntityAlreadyExist extends RuntimeException {
-    private final String entityName;
+public class TokenRevokedException extends RuntimeException {
+    private final String token;
     private final String message;
 }

@@ -11,7 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import ru.tbcarus.jrfinal.config.filter.JwtAuthenticationFilter;
-import ru.tbcarus.jrfinal.controller.user.RegisterController;
+import ru.tbcarus.jrfinal.controller.RegisterController;
 
 @Configuration
 @EnableWebSecurity

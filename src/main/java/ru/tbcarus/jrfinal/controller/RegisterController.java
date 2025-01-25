@@ -1,4 +1,4 @@
-package ru.tbcarus.jrfinal.controller.user;
+package ru.tbcarus.jrfinal.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
