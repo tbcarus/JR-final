@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.tbcarus.jrfinal.exception.EntityAlreadyExistException;
 import ru.tbcarus.jrfinal.exception.EntityNotFoundException;
@@ -20,12 +21,14 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final UserRegisterMapper userRegisterMapper;
     private final JwtService jwtService;
+    private final PasswordEncoder passwordEncoder;
 
     public User register(UserRegisterDto userRegisterDto) {
         if (userRepository.existsByEmail(userRegisterDto.getEmail().toLowerCase())) {
             throw new EntityAlreadyExistException(userRegisterDto.getEmail(), String.format("User %s already exist", userRegisterDto.getEmail()));
         }
         User user = userRegisterMapper.toUser(userRegisterDto);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
@@ -36,7 +39,7 @@ public class UserService implements UserDetailsService {
 
     public LoginResponse login(LoginRequest loginRequest) {
         User user = getUserByEmail(loginRequest.getEmail());
-        if (!loginRequest.getPassword().equals(user.getPassword())) {
+        if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
             throw new EntityNotFoundException(loginRequest.getEmail(), String.format("User %s not found", loginRequest.getEmail()));
         }
         String accessToken = jwtService.generateAccessToken(user);

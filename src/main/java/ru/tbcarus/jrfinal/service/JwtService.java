@@ -18,6 +18,7 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
 @Service
@@ -47,6 +48,10 @@ public class JwtService {
     }
 
     public String generateRefreshToken(User user) {
+        Optional<RefreshToken> refreshTokenFromDB = refreshTokenRepository.findByUserNameAndRevoked(user.getUsername(), false);
+        if (refreshTokenFromDB.isPresent()) {
+            return refreshTokenFromDB.get().getToken();
+        }
         String refreshToken = Jwts.builder()
                 .claims(generateClaims(user))
                 .subject(user.getUsername())
