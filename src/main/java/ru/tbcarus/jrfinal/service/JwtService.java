@@ -14,6 +14,7 @@ import ru.tbcarus.jrfinal.model.User;
 import ru.tbcarus.jrfinal.repository.RefreshTokenRepository;
 
 import java.security.Key;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.HashMap;
@@ -48,7 +49,7 @@ public class JwtService {
     }
 
     public String generateRefreshToken(User user) {
-        Optional<RefreshToken> refreshTokenFromDB = refreshTokenRepository.findByUserNameAndRevoked(user.getUsername(), false);
+        Optional<RefreshToken> refreshTokenFromDB = refreshTokenRepository.findByUserNameAndRevokedAndExpiresAfter(user.getUsername(), false, LocalDateTime.now());
         if (refreshTokenFromDB.isPresent()) {
             return refreshTokenFromDB.get().getToken();
         }

@@ -1,5 +1,7 @@
 package ru.tbcarus.jrfinal.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -15,6 +17,7 @@ import ru.tbcarus.jrfinal.service.UserService;
 
 @RestController
 @RequiredArgsConstructor
+@Tag(name = "Registration & Authentication")
 public class RegisterController {
     public static final String USER_URL = "/api/user";
     public static final String REGISTER_URL = "/api/user/register";
@@ -23,17 +26,20 @@ public class RegisterController {
 
     private final UserService userService;
 
+    @Operation(summary = "User registration")
     @PostMapping(REGISTER_URL)
     public ResponseEntity<Void> register(@Validated @RequestBody UserRegisterDto userRegisterDto) {
         User savedUser = userService.register(userRegisterDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @Operation(summary = "User authentication")
     @PostMapping(LOGIN_URL)
     public ResponseEntity<LoginResponse> login(@Validated @RequestBody LoginRequest loginRequest) {
         return ResponseEntity.status(HttpStatus.OK).body(userService.login(loginRequest));
     }
 
+    @Operation(summary = "Take new access token")
     @PostMapping(REFRESH_TOKEN_URL)
     public ResponseEntity<RefreshResponse> refresh(@RequestBody RefreshRequest refreshRequest) {
         return ResponseEntity.status(HttpStatus.OK).body(userService.refreshToken(refreshRequest.getRefreshToken()));

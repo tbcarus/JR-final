@@ -24,7 +24,8 @@ public class SecurityConfig {
         http
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers(RegisterController.REGISTER_URL,
-                                RegisterController.LOGIN_URL, RegisterController.REFRESH_TOKEN_URL).permitAll()
+                                RegisterController.LOGIN_URL, RegisterController.REFRESH_TOKEN_URL,
+                                "/swagger-ui/**", "/swagger-resources/*", "/v3/api-docs/**").permitAll()
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .csrf(csrf -> csrf.disable());
