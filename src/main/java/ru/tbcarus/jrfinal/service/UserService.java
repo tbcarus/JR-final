@@ -36,6 +36,9 @@ public class UserService implements UserDetailsService {
 
     public LoginResponse login(LoginRequest loginRequest) {
         User user = getUserByEmail(loginRequest.getEmail());
+        if (!loginRequest.getPassword().equals(user.getPassword())) {
+            throw new EntityNotFoundException(loginRequest.getEmail(), String.format("User %s not found", loginRequest.getEmail()));
+        }
         String accessToken = jwtService.generateAccessToken(user);
         String refreshToken = jwtService.generateRefreshToken(user);
         return new LoginResponse(accessToken, refreshToken);

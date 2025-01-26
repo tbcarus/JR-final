@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,13 +24,13 @@ public class RegisterController {
     private final UserService userService;
 
     @PostMapping(REGISTER_URL)
-    public ResponseEntity<Void> register(@RequestBody UserRegisterDto userRegisterDto) {
+    public ResponseEntity<Void> register(@Validated @RequestBody UserRegisterDto userRegisterDto) {
         User savedUser = userService.register(userRegisterDto);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
     @PostMapping(LOGIN_URL)
-    public ResponseEntity<LoginResponse> login(@RequestBody LoginRequest loginRequest) {
+    public ResponseEntity<LoginResponse> login(@Validated @RequestBody LoginRequest loginRequest) {
         return ResponseEntity.status(HttpStatus.OK).body(userService.login(loginRequest));
     }
 
