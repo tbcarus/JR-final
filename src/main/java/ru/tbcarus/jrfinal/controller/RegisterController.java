@@ -1,5 +1,6 @@
 package ru.tbcarus.jrfinal.controller;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,14 +13,14 @@ import ru.tbcarus.jrfinal.model.dto.*;
 import ru.tbcarus.jrfinal.service.UserService;
 
 @RestController
+@RequiredArgsConstructor
 public class RegisterController {
     public static final String USER_URL = "/api/user";
     public static final String REGISTER_URL = "/api/user/register";
     public static final String LOGIN_URL = "/api/user/login";
     public static final String REFRESH_TOKEN_URL = "/api/user/refresh";
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
 
     @PostMapping(REGISTER_URL)
     public ResponseEntity<Void> register(@RequestBody UserRegisterDto userRegisterDto) {

@@ -25,6 +25,13 @@ token:
   signing:
     key: ${JWT_KEY}
 
+client:
+  polygon:
+    url: https://api.polygon.io
+    key: ${POLYGON_KEY}
+
 logging:
   level:
     liquibase: info
+    feign:
+      client: info

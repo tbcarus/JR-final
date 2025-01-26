@@ -23,7 +23,7 @@ public class UserService implements UserDetailsService {
 
     public User register(UserRegisterDto userRegisterDto) {
         if (userRepository.existsByEmail(userRegisterDto.getEmail().toLowerCase())) {
-            throw new EntityAlreadyExistException(userRegisterDto.getEmail(), "Entity already exist");
+            throw new EntityAlreadyExistException(userRegisterDto.getEmail(), String.format("User %s already exist", userRegisterDto.getEmail()));
         }
         User user = userRegisterMapper.toUser(userRegisterDto);
         return userRepository.save(user);
@@ -49,7 +49,7 @@ public class UserService implements UserDetailsService {
     private User getUserByEmail(String email) {
         Optional<User> optionalUser = userRepository.findByEmailIgnoreCase(email);
         if (optionalUser.isEmpty()) {
-            throw new EntityNotFoundException(email, String.format("Entity %s does not exist", email));
+            throw new EntityNotFoundException(email, String.format("User %s does not exist", email));
         }
         return optionalUser.get();
     }

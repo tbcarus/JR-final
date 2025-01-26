@@ -1,4 +1,4 @@
-package ru.tbcarus.jrfinal.model;
+package ru.tbcarus.jrfinal.model.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,9 +12,10 @@ import java.util.UUID;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Resp {
+public class TickerDataResponse {
 
-    private final UUID uuid = UUID.randomUUID();
-    private Ticker ticker;
-    private List<TickerData> tickerData;
+    private final UUID id = UUID.randomUUID();
+    private String ticker;
+    private List<TickerDataDto> data;
 }
+

@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
@@ -23,10 +24,10 @@ public class TickerData {
     private Integer id;
 
     private LocalDate date;
-    private Integer open;
-    private Integer close;
-    private Integer high;
-    private Integer low;
+    private BigDecimal open;
+    private BigDecimal close;
+    private BigDecimal high;
+    private BigDecimal low;
 
     @ManyToOne
     @OnDelete(action = OnDeleteAction.CASCADE)

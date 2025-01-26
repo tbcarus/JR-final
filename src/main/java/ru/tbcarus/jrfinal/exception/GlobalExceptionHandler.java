@@ -1,5 +1,6 @@
 package ru.tbcarus.jrfinal.exception;
 
+import feign.FeignException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -27,7 +28,7 @@ public class GlobalExceptionHandler {
                 .body(
                         ErrorResponse.builder()
                                 .uuid(UUID.randomUUID())
-                                .message(String.format("Username %s already exists", e.getEntityName()))
+                                .message(e.getMessage())
                                 .build()
                 );
     }
@@ -38,7 +39,29 @@ public class GlobalExceptionHandler {
                 .body(
                         ErrorResponse.builder()
                                 .uuid(UUID.randomUUID())
-                                .message(String.format("Entity %s not found", e.getEntityName()))
+                                .message(e.getMessage())
+                                .build()
+                );
+    }
+
+    @ExceptionHandler(TickerRequestException.class)
+    public ResponseEntity<ErrorResponse> handleTickerRequestException(TickerRequestException e) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(
+                        ErrorResponse.builder()
+                                .uuid(UUID.randomUUID())
+                                .message(e.getMessage())
+                                .build()
+                );
+    }
+
+    @ExceptionHandler(FeignException.class)
+    public ResponseEntity<ErrorResponse> handleFeignException(FeignException e) {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(
+                        ErrorResponse.builder()
+                                .uuid(UUID.randomUUID())
+                                .message(e.getMessage())
                                 .build()
                 );
     }
