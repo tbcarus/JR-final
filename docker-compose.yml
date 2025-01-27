@@ -1,0 +1,32 @@
+services:
+  app:
+    image: app
+    container_name: spring_app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8085:8080"
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/JR-final-dd
+      DB_USER: ps2
+      DB_PASSWORD: ps2
+    env_file:
+      - ./src/main/resources/.env.docker
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres:15
+    container_name: ps2
+    environment:
+      POSTGRES_USER: ps2
+      POSTGRES_PASSWORD: ps2
+      POSTGRES_DB: JR-final-dd
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

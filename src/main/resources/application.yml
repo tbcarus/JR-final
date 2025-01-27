@@ -1,6 +1,4 @@
 spring:
-  config:
-    import: env.properties
   application:
     name: JR-final
   datasource:
@@ -20,6 +18,7 @@ spring:
 server:
   servlet:
     context-path: /
+  port: 8080
 
 token:
   signing:
