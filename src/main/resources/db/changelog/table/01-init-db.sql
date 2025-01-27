@@ -39,7 +39,7 @@ CREATE TABLE IF NOT EXISTS ticker_data
     low       INTEGER,
     user_id   INTEGER NOT NULL,
     ticker_id INTEGER NOT NULL,
-    CONSTRAINT user_date_idx UNIQUE (user_id, date),
+    CONSTRAINT user_ticker_date_idx UNIQUE (user_id, ticker_id, date),
     FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
     FOREIGN KEY (ticker_id) REFERENCES ticker (id) ON DELETE CASCADE
 );
