@@ -1,4 +1,4 @@
-package ru.tbcarus.jrfinal.exception;
+package ru.tbcarus.jrfinal.exception.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
