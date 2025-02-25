@@ -5,7 +5,47 @@ plugins {
 }
 
 group = 'ru.tbcarus'
-version = '0.0.1-SNAPSHOT'
+//version = '0.0.1-SNAPSHOT'
+
+task build {
+    doLast {
+        if (project.hasProperty("snapshot")) {
+            // Чтение версии из файла version.properties
+            def versionPropsFile = file('version.properties')
+            if (!versionPropsFile.exists()) {
+                throw new GradleException("version.properties file not found!")
+            }
+
+            def versionProps = new Properties()
+            versionProps.load(new FileInputStream(versionPropsFile))
+
+            // Получение текущей версии и удаление суффикса -SNAPSHOT
+            def currentVersion = versionProps['version'].replace("-SNAPSHOT", "")
+
+            // Разбор текущей версии
+            def (versionMajor, versionMinor, versionPatch) = currentVersion.tokenize('.').collect { it.toInteger() }
+
+            // Увеличение patch-версии
+            versionPatch++
+
+            // Формирование новой версии с суффиксом -SNAPSHOT
+            def newVersion = "${versionMajor}.${versionMinor}.${versionPatch}-SNAPSHOT".toString()
+
+            // Запись новой версии в файл
+            versionPropsFile.withWriter { writer ->
+                versionProps['version'] = newVersion
+                versionProps.store(writer, null)
+            }
+
+            // Установка новой версии в проекте
+            version = newVersion
+
+            // Вывод новой версии в консоль
+            println "New version: ${version}"
+        }
+    }
+}
+
 
 java {
     toolchain {
