@@ -1,9 +1,11 @@
 services:
   app:
-    image: app
+    image: jr-final:${APP_VERSION}
     container_name: spring_app
     build:
       context: .
+      args:
+        APP_VERSION: ${APP_VERSION}
       dockerfile: Dockerfile
     ports:
       - "8085:8080"
