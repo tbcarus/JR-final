@@ -6,7 +6,7 @@ plugins {
 
 group = 'ru.tbcarus'
 
-// ./gradlew build -x test - сборка jar файла текущей версии
+// ./gradlew build -x test - сборка jar файла текущей версии с суфиксом -SNAPSHOT
 // ./gradlew build -Prelease -x test - сборка jar файла текущей версии с суффиксом -RELEASE
 // ./gradlew build -Psnapshot -x test - сборка jar файла с инкрементом версии и суфиксом -SNAPSHOT
 def versionEnvFile = file('.env')
