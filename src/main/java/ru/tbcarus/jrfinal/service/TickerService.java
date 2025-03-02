@@ -12,7 +12,7 @@ import ru.tbcarus.jrfinal.model.Ticker;
 import ru.tbcarus.jrfinal.model.TickerData;
 import ru.tbcarus.jrfinal.model.User;
 import ru.tbcarus.jrfinal.model.dto.TickerDataDto;
-import ru.tbcarus.jrfinal.model.dto.TickerDataMapper;
+import ru.tbcarus.jrfinal.model.dto.mapper.TickerDataMapper;
 import ru.tbcarus.jrfinal.model.dto.TickerDataRequest;
 import ru.tbcarus.jrfinal.model.dto.TickerDataResponse;
 import ru.tbcarus.jrfinal.repository.TickerDataRepository;
