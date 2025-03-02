@@ -9,7 +9,6 @@ import ru.tbcarus.jrfinal.client.dto.PolygonResponseDto;
 
 import java.time.LocalDate;
 
-@Component
 @FeignClient(name = "polygon-api", url = "${client.polygon.url}")
 public interface PolygonServiceClient {
 
