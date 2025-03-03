@@ -59,9 +59,8 @@ public class UserService implements UserDetailsService {
 
     private User getUserByEmail(String email) {
         Optional<User> optionalUser = userRepository.findByEmailIgnoreCase(email);
-        if (optionalUser.isEmpty()) {
-            throw new EntityNotFoundException(email, String.format("User %s does not exist", email));
-        }
-        return optionalUser.get();
+        return optionalUser.orElseThrow(() ->
+                new EntityNotFoundException(email, String.format("User %s does not exist", email))
+        );
     }
 }

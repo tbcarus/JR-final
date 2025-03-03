@@ -36,7 +36,9 @@ public class TickerService {
 
     public TickerDataResponse getSavedTickerData(User user, String tickerName) {
         Ticker ticker = checkTicker(tickerName);
-        List<TickerDataDto> tickerDataDtoList = tickerDataRepository.findAllByUserAndTicker(user, ticker).stream().map(tickerDataMapper::toDto).toList();
+        List<TickerDataDto> tickerDataDtoList = tickerDataRepository.findAllByUserAndTicker(user, ticker).stream()
+                        .map(tickerDataMapper::toDto)
+                        .toList();
         return TickerDataResponse.builder()
                 .ticker(ticker.getName())
                 .data(tickerDataDtoList)
@@ -53,7 +55,9 @@ public class TickerService {
 
         List<PolygonResponseTickerDataDto> filteredPolygonTickerData = filterData(localTickerData, polygonTickerData);
         if (!filteredPolygonTickerData.isEmpty()) {
-            List<TickerData> tickersToSave = filteredPolygonTickerData.stream().map(ptd -> mapToTickerData(user, ticker, ptd)).toList();
+            List<TickerData> tickersToSave = filteredPolygonTickerData.stream()
+                    .map(ptd -> mapToTickerData(user, ticker, ptd))
+                    .toList();
             tickerDataRepository.saveAll(tickersToSave);
         }
     }
