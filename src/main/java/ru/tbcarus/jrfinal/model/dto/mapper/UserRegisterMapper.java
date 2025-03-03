@@ -12,7 +12,6 @@ import java.util.Set;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING, imports = {Set.class, Role.class})
 public interface UserRegisterMapper {
 
-    @Mapping(target = "roles", expression = "java(Set.of(Role.USER))")
     User toUser(UserRegisterDto dto);
 
     UserRegisterDto toUserRegisterDto(User user);

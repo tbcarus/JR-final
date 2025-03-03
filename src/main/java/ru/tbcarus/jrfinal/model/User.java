@@ -31,7 +31,7 @@ public class User implements UserDetails {
     private String password;
     private String name;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
     @JsonManagedReference
     private List<TickerData> tickerData;
 
@@ -43,11 +43,10 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-//        return roles
-//                .stream()
-//                .map(role -> new SimpleGrantedAuthority(role.getAuthority()))
-//                .collect(Collectors.toSet());
-        return List.of();
+        return roles
+                .stream()
+                .map(role -> new SimpleGrantedAuthority(role.getAuthority()))
+                .collect(Collectors.toSet());
     }
 
     @Override

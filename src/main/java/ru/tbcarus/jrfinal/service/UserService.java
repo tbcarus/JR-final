@@ -8,12 +8,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.tbcarus.jrfinal.exception.EntityAlreadyExistException;
 import ru.tbcarus.jrfinal.exception.EntityNotFoundException;
+import ru.tbcarus.jrfinal.model.Role;
 import ru.tbcarus.jrfinal.model.User;
 import ru.tbcarus.jrfinal.model.dto.*;
 import ru.tbcarus.jrfinal.model.dto.mapper.UserRegisterMapper;
 import ru.tbcarus.jrfinal.repository.UserRepository;
 
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +31,7 @@ public class UserService implements UserDetailsService {
             throw new EntityAlreadyExistException(userRegisterDto.getEmail(), String.format("User %s already exist", userRegisterDto.getEmail()));
         }
         User user = userRegisterMapper.toUser(userRegisterDto);
+        user.setRoles(Set.of(Role.USER));
         user.setEmail(user.getEmail().toLowerCase());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
