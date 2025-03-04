@@ -8,10 +8,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import ru.tbcarus.jrfinal.exception.EntityNotFoundException;
 import ru.tbcarus.jrfinal.exception.TokenRevokedException;
 import ru.tbcarus.jrfinal.model.RefreshToken;
 import ru.tbcarus.jrfinal.model.User;
 import ru.tbcarus.jrfinal.repository.RefreshTokenRepository;
+import ru.tbcarus.jrfinal.repository.UserRepository;
 
 import java.security.Key;
 import java.time.LocalDateTime;
@@ -30,7 +32,7 @@ public class JwtService {
     @Value("${token.signing.key}")
     private String jwtSigningKey;
 
-    private final long expirationTime = 20 * 1000;
+    private final long expirationTime = 60 * 1000;
     private final long refreshExpirationTime = 7 * 24 * 60 * 60 * 1000;
 
     private Map<String, Object> generateClaims(User user) {
@@ -55,13 +57,12 @@ public class JwtService {
         }
         String refreshToken = Jwts.builder()
                 .claims(generateClaims(user))
-                .subject(user.getUsername())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + refreshExpirationTime))
                 .signWith(getSigningKey()).compact();
         RefreshToken entityRefreshToken = RefreshToken.builder()
                 .token(refreshToken)
-                .userName(extractUserName(refreshToken))
+                .userName(user.getUsername())
                 .expires(extractExpiration(refreshToken).toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime())
                 .revoked(false)
                 .build();
@@ -69,10 +70,9 @@ public class JwtService {
         return refreshToken;
     }
 
-    public String refreshAccessToken(User user, String refreshToken) {
-        RefreshToken tokenDb = getRefreshToken(refreshToken);
-        if (tokenDb != null && tokenDb.isRevoked()) {
-            throw new TokenRevokedException(refreshToken, "token revoked");
+    public String refreshAccessToken(User user, RefreshToken tokenDb) {
+        if (tokenDb.isRevoked()) {
+            throw new TokenRevokedException(tokenDb.getToken(), "token revoked");
         }
         return generateAccessToken(user);
     }
@@ -108,6 +108,7 @@ public class JwtService {
     }
 
     public RefreshToken getRefreshToken(String token) {
-        return refreshTokenRepository.findByToken(token).get();
+        return refreshTokenRepository.findByToken(token).orElseThrow(() ->
+                new EntityNotFoundException(token, String.format("Token %s not found", token)));
     }
 }

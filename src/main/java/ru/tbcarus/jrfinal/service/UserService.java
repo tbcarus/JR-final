@@ -8,6 +8,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ru.tbcarus.jrfinal.exception.EntityAlreadyExistException;
 import ru.tbcarus.jrfinal.exception.EntityNotFoundException;
+import ru.tbcarus.jrfinal.model.RefreshToken;
 import ru.tbcarus.jrfinal.model.Role;
 import ru.tbcarus.jrfinal.model.User;
 import ru.tbcarus.jrfinal.model.dto.*;
@@ -45,7 +46,7 @@ public class UserService implements UserDetailsService {
     public LoginResponse login(LoginRequest loginRequest) {
         User user = getUserByEmail(loginRequest.getEmail());
         if (!passwordEncoder.matches(loginRequest.getPassword(), user.getPassword())) {
-            throw new EntityNotFoundException(loginRequest.getEmail(), String.format("User %s not found", loginRequest.getEmail()));
+            throw new EntityNotFoundException(loginRequest.getEmail(), String.format("Wrong user %s or password", loginRequest.getEmail()));
         }
         String accessToken = jwtService.generateAccessToken(user);
         String refreshToken = jwtService.generateRefreshToken(user);
@@ -53,14 +54,16 @@ public class UserService implements UserDetailsService {
     }
 
     public RefreshResponse refreshToken(String refreshToken) {
-        User user = getUserByEmail(jwtService.extractUserName(refreshToken));
-        return new RefreshResponse(jwtService.refreshAccessToken(user, refreshToken));
+        RefreshToken tokenDb = jwtService.getRefreshToken(refreshToken);
+        String email = tokenDb.getUserName();
+        User user = getUserByEmail(email);
+        return new RefreshResponse(jwtService.refreshAccessToken(user, tokenDb));
     }
 
     private User getUserByEmail(String email) {
         Optional<User> optionalUser = userRepository.findByEmailIgnoreCase(email);
         return optionalUser.orElseThrow(() ->
-                new EntityNotFoundException(email, String.format("User %s does not exist", email))
+                new EntityNotFoundException(email, String.format("Wrong user %s or password", email))
         );
     }
 }
