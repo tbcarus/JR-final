@@ -6,9 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
+import ru.tbcarus.jrfinal.UserTestData;
+import ru.tbcarus.jrfinal.exception.EntityAlreadyExistException;
+import ru.tbcarus.jrfinal.model.User;
 import ru.tbcarus.jrfinal.model.dto.LoginRequest;
 import ru.tbcarus.jrfinal.model.dto.RefreshRequest;
 import ru.tbcarus.jrfinal.model.dto.RefreshResponse;
@@ -36,31 +41,34 @@ class RegisterControllerTest {
     private UserService userService;
 
     @Test
-    public void testRegisterFailure() throws Exception {
-        UserRegisterDto userRegisterDto = UserRegisterDto.builder()
-                .email("invalid-email")
-                .password("pas")
-                .name("user")
-                .build();
+    public void testRegisterSuccess() throws Exception {
+        when(userService.register(any(UserRegisterDto.class))).thenReturn(new User());
 
+        ResultActions perform = mockMvc.perform(post(RegisterController.REGISTER_URL)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(UserTestData.testUserRegisterDto)))
+                .andExpect(status().isCreated());
+    }
+
+    @Test
+    public void testRegisterBadRequest() throws Exception {
         mockMvc.perform(post(RegisterController.REGISTER_URL)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(userRegisterDto)))
+                        .content(objectMapper.writeValueAsString(UserTestData.invalidUserRegisterDto)))
                 .andExpect(status().isBadRequest());
     }
 
     @Test
-    public void testRegisterSuccess() throws Exception {
-        UserRegisterDto userRegisterDto = UserRegisterDto.builder()
-                .email("qqq@ww.ee")
-                .password("pass")
-                .name("user")
-                .build();
+    public void testRegisterUserAlreadyExists() throws Exception {
+        UserRegisterDto urd = UserTestData.invalidUserRegisterDto;
+
+        when(userService.register(any(UserRegisterDto.class))).thenThrow(new EntityAlreadyExistException(urd.getEmail(), "User already exist"));
 
         mockMvc.perform(post(RegisterController.REGISTER_URL)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(userRegisterDto)))
-                .andExpect(status().isCreated());
+                        .content(objectMapper.writeValueAsString(urd)))
+                .andExpect(status().isBadRequest());
+
     }
 
     @Test
@@ -83,9 +91,16 @@ class RegisterControllerTest {
     }
 
     @Test
+    @WithMockUser
+    void testAuthenticated() throws Exception {
+        mockMvc.perform(get(RegisterController.USER_URL + "/test"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
     void testUnAuthenticated() throws Exception {
-        mockMvc.perform(get("/api/user/test"))
-                .andExpect(status().is(403));
+        mockMvc.perform(get(RegisterController.USER_URL + "/test"))
+                .andExpect(status().isForbidden());
     }
 
 }
