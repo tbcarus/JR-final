@@ -38,7 +38,7 @@ class UserServiceTest {
         assertNotNull(savedUser);
         assertEquals(testUserRegisterDto.getEmail(), savedUser.getEmail());
         assertEquals(testUserRegisterDto.getName(), savedUser.getName());
-        assertTrue(passwordEncoder.matches(testUserRegisterDto.getPassword(), savedUser.getPassword())); // Проверка шифрования пароля
+        assertTrue(passwordEncoder.matches(testUserRegisterDto.getPassword(), savedUser.getPassword()));
         assertTrue(savedUser.getRoles().contains(Role.USER));
 
         User userFromDb = userRepository.findByEmailIgnoreCase(testUserRegisterDto.getEmail()).orElse(null);
