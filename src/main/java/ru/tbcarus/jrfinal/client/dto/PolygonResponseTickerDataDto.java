@@ -18,10 +18,10 @@ public class PolygonResponseTickerDataDto {
     private BigDecimal c;
     private BigDecimal h;
     private BigDecimal l;
-    private int n; ;
+    private int n;
     private BigDecimal o;
     @JsonDeserialize(using = MillisToLocalDateDeserializer.class)
-    private LocalDate t ;
-    private long v; ;
+    private LocalDate t;
+    private long v;
     private BigDecimal vw;
 }

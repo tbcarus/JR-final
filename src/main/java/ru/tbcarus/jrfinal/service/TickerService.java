@@ -12,9 +12,9 @@ import ru.tbcarus.jrfinal.model.Ticker;
 import ru.tbcarus.jrfinal.model.TickerData;
 import ru.tbcarus.jrfinal.model.User;
 import ru.tbcarus.jrfinal.model.dto.TickerDataDto;
-import ru.tbcarus.jrfinal.model.dto.mapper.TickerDataMapper;
 import ru.tbcarus.jrfinal.model.dto.TickerDataRequest;
 import ru.tbcarus.jrfinal.model.dto.TickerDataResponse;
+import ru.tbcarus.jrfinal.model.dto.mapper.TickerDataMapper;
 import ru.tbcarus.jrfinal.repository.TickerDataRepository;
 import ru.tbcarus.jrfinal.repository.TickerRepository;
 
@@ -64,10 +64,7 @@ public class TickerService {
 
     private Ticker checkTicker(String tickerName) {
         Optional<Ticker> ticker = tickerRepository.findByName(tickerName);
-        if (ticker.isEmpty()) {
-            throw new EntityNotFoundException(tickerName, String.format("Ticker with name %s not found in local base", tickerName));
-        }
-        return ticker.get();
+        return ticker.orElseThrow(() -> new EntityNotFoundException(tickerName, String.format("Ticker with name %s not found", tickerName)));
     }
 
     private Ticker checkRequest(TickerDataRequest tdr) {
